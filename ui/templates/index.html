@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Monitoring Kebun - Web Kiosk</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Inter:wght@400;600;700;800&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=3.5.0">
+
+
+
+
+
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- HEADER (TOP PANEL - 100% WIDTH) -->
+        <header class="neo-card header-panel">
+            <div class="header-titles">
+                <h1>SISTEM MONITORING KEBUN</h1>
+                <p>AI CAMERA & SENSOR NPK SOIL INTEGRATION KIOSK GATEWAY</p>
+            </div>
+            <div class="header-widgets">
+                <div class="widget-box date-box">
+                    <span id="date-display-label">📅 --/--/----</span>
+                </div>
+                <span class="widget-separator">×</span>
+                <div class="widget-box time-box">
+                    <span id="time-display-label">⏰ --:--:--</span>
+                </div>
+                <span class="widget-separator">×</span>
+                <div class="widget-box mode-box">
+                    <span class="mode-caption">MODE SENSOR</span>
+                    <span class="mode-val text-green" id="mode-sensor-status">ESP32 PUSH ONLINE</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- WIZARD STEP NAVIGATION BAR (HORIZONTAL - 100% WIDTH) -->
+        <div class="neo-card step-navigation-card">
+            <div class="step-navigation-wrapper">
+                <button class="step-btn active" data-step="0" id="step-btn-form">
+                    <span class="btn-icon">📝</span> DASHBOARD / FORM
+                </button>
+                <span class="step-arrow">➔</span>
+                <button class="step-btn" data-step="1" id="step-btn-camera">
+                    <span class="btn-icon">📷</span> KAMERA INSPEKSI
+                </button>
+                <span class="step-arrow">➔</span>
+                <button class="step-btn" data-step="2" id="step-btn-sensor">
+                    <span class="btn-icon">📊</span> BACA SENSOR
+                </button>
+                <span class="step-arrow">➔</span>
+                <button class="step-btn" data-step="3" id="step-btn-data">
+                    <span class="btn-icon">📤</span> RIWAYAT INSPEKSI
+                </button>
+            </div>
+        </div>
+
+        <!-- WIZARD PAGE CONTENT -->
+        <div class="wizard-pages-container">
+            
+            <!-- PAGE 1: FORM DASHBOARD -->
+            <section class="wizard-page active" id="page-form">
+                <div class="section-heading-block">
+                    <h2>INPUT DATA KEBUN</h2>
+                    <p>Silakan lengkapi formulir di bawah ini sebelum melanjutkan ke pengambilan foto.</p>
+                </div>
+                
+                <form id="garden-form" class="form-grid-layout" onsubmit="return false;">
+                    
+                    <!-- Block 1: Perusahaan -->
+                    <div class="neo-card form-block-card border-yellow">
+                        <div class="form-block-header bg-yellow">
+                            <h3>🏢 DATA PERUSAHAAN</h3>
+                        </div>
+                        <div class="form-block-body">
+                            <div class="form-inputs-layout">
+                                <div class="form-element">
+                                    <label>Nama Perusahaan *</label>
+                                    <input type="text" id="form-perusahaan" class="neo-input" placeholder="Masukkan nama perusahaan..." required>
+                                </div>
+                                <div class="form-element">
+                                    <label>Nama Kebun *</label>
+                                    <input type="text" id="form-kebun" class="neo-input" placeholder="Masukkan nama kebun..." required>
+                                </div>
+                            </div>
+                            <div class="card-helper-text">
+                                <span>💡</span> Masukkan nama perusahaan & kebun.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Block 2: Data Blok -->
+                    <div class="neo-card form-block-card border-orange">
+                        <div class="form-block-header bg-orange">
+                            <h3>📦 DATA BLOK</h3>
+                        </div>
+                        <div class="form-block-body">
+                            <div class="form-inputs-layout split-2">
+                                <div class="form-element">
+                                    <label>Afdeling</label>
+                                    <input type="text" id="form-afdeling" class="neo-input" placeholder="Afdeling kebun...">
+                                </div>
+                                <div class="form-element">
+                                    <label>No Blok</label>
+                                    <input type="text" id="form-noblok" class="neo-input" placeholder="Nomor blok...">
+                                </div>
+                                <div class="form-element">
+                                    <label>Tahun Tanam</label>
+                                    <input type="number" id="form-tahun" class="neo-input" min="1990" max="2030" value="2020">
+                                </div>
+                                <div class="form-element">
+                                    <label>Luas Lahan (Ha)</label>
+                                    <input type="number" id="form-luas" class="neo-input" step="0.1" min="0" value="10.0">
+                                </div>
+                            </div>
+                            <div class="card-helper-text">
+                                <span>💡</span> Input afdeling & tahun tanam sawit.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Block 3: Data Inspeksi -->
+                    <div class="neo-card form-block-card border-pink">
+                        <div class="form-block-header bg-pink">
+                            <h3>📝 DATA INSPEKSI</h3>
+                        </div>
+                        <div class="form-block-body">
+                            <div class="form-inputs-layout split-2">
+                                <div class="form-element">
+                                    <label>Jumlah Terserang (Pohon)</label>
+                                    <input type="number" id="form-terserang" class="neo-input" min="0" value="0">
+                                </div>
+                                <div class="form-element">
+                                    <label>Tanggal Inspeksi</label>
+                                    <input type="date" id="form-tanggal" class="neo-input">
+                                </div>
+                            </div>
+                            <div class="card-helper-text">
+                                <span>💡</span> Input jumlah sawit terserang hama.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Block 4: Petugas & Catatan Lapangan -->
+                    <div class="neo-card form-block-card border-teal">
+                        <div class="form-block-header bg-teal">
+                            <h3>👷 PETUGAS & CATATAN</h3>
+                        </div>
+                        <div class="form-block-body">
+                            <div class="form-inputs-layout">
+                                <div class="form-element">
+                                    <label>Nama Petugas / Surveyor</label>
+                                    <input type="text" id="form-surveyor" class="neo-input" value="Tim Survei Lapangan" placeholder="Nama petugas inspeksi...">
+                                </div>
+                                <div class="form-element">
+                                    <label>Catatan Khusus Lapangan</label>
+                                    <input type="text" id="form-catatan" class="neo-input" placeholder="Catatan kondisi kebun / tanah...">
+                                </div>
+                            </div>
+                            <div class="card-helper-text">
+                                <span>💡</span> Nama petugas & catatan khusus survei.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Block 5: Spatial Node & Dynamic Tree Graph (Canopy Touch Parameter) -->
+                    <div class="neo-card form-block-card border-purple" style="grid-column: 1 / -1; margin-top: 10px;">
+                        <div class="form-block-header bg-purple" style="background:#8b5cf6; color:#fff;">
+                            <h3>🌴 DATA POHON & MAPPING SPASIAL DINAMIS (DYNAMIC SPATIAL & CANOPY TOUCH GRAPH)</h3>
+                        </div>
+                        <div class="form-block-body">
+                            <!-- Input Pohon Target -->
+                            <div class="form-inputs-layout split-3" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 14px;">
+                                <div class="form-element">
+                                    <label>ID / Kode Pohon (Node Fokus) *</label>
+                                    <input type="text" id="tree-node-id" class="neo-input" value="Pohon A" placeholder="Contoh: Pohon A, P-01">
+                                </div>
+                                <div class="form-element">
+                                    <label>Umur Pohon (Tahun)</label>
+                                    <input type="number" id="tree-age" class="neo-input" value="7" min="1" max="35">
+                                </div>
+                                <div class="form-element">
+                                    <label>Kondisi Kesehatan Pohon Fokus</label>
+                                    <select id="tree-health-status" class="neo-input" style="font-weight: 800; font-size:13px;">
+                                        <option value="SEHAT" style="color:#10b981;">🟢 SEHAT</option>
+                                        <option value="TERTULAR_PARAH" style="color:#ef4444;" selected>🔴 TERTULAR PARAH (Kelihatan Fisiknya)</option>
+                                        <option value="TERTULAR_ENGGA_PARAH" style="color:#f59e0b;">🟡 TERTULAR ENGGA PARAH</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Dynamic Neighbors Section -->
+                            <div style="background: #0f172a; padding: 14px; border-radius: 10px; border: 2px solid #334155;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+                                    <div style="font-size: 13px; font-weight: 800; color: #ffd700; display:flex; align-items:center; gap:8px;">
+                                        <span>🧭</span> POHON TETANGGA KORELASI (SUDUT DERAJAT °, JARAK, & INTERAKSI DAUN)
+                                    </div>
+                                    <button type="button" id="btn-add-neighbor" class="neo-btn bg-teal" style="font-size:11px; padding:6px 14px; font-weight:800;">
+                                        ➕ TAMBAH POHON TETANGGA
+                                    </button>
+                                </div>
+
+                                <!-- Dynamic Neighbors Grid Container -->
+                                <div id="neighbors-list-container" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:12px;">
+                                    <!-- Rendered dynamically by script.js -->
+                                </div>
+                            </div>
+
+                            <!-- Premium SVG Graph Visualizer Canvas -->
+                            <div style="margin-top: 16px; background: #070b14; padding: 18px; border-radius: 10px; border: 3px solid #8b5cf6;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                                    <h4 style="margin:0; color:#a78bfa; font-family:'Space Grotesk',sans-serif; font-size:15px; display:flex; align-items:center; gap:8px;">
+                                        <span>🌐</span> VISUAL MAPPING GRAPH ANTAK POHON (DERAJAT, JARAK, & SENTUHAN DAUN)
+                                    </h4>
+                                    <div style="display:flex; gap:8px; align-items:center;">
+                                        <span id="graph-status-badge" class="neo-badge" style="background:#ef4444; color:#fff; font-size:11px; font-weight:800; padding:4px 10px; border-radius:6px;">🔴 TERTULAR PARAH</span>
+                                    </div>
+                                </div>
+
+                                <!-- Legend for Canopy Contact -->
+                                <div style="display:flex; gap:16px; font-size:11px; color:#cbd5e1; margin-bottom:10px; background:#0f172a; padding:6px 12px; border-radius:6px; border:1px solid #1e293b;">
+                                    <div style="display:flex; align-items:center; gap:4px;">
+                                        <span style="display:inline-block; width:14px; height:4px; background:#10b981; border-radius:2px;"></span>
+                                        <span>Garis Hijau: Pohon Sehat</span>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:4px;">
+                                        <span style="display:inline-block; width:14px; height:4px; background:#ef4444; border-dasharray:3;"></span>
+                                        <span>Garis Merah: Tertular Parah</span>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:4px;">
+                                        <span style="color:#10b981; font-weight:bold;">🍃 Label DAUN:</span>
+                                        <span>Daun Bersentuhan (Vektor Kontak Fisik Langsung)</span>
+                                    </div>
+                                </div>
+
+                                <!-- SVG Graph Render Container -->
+                                <div style="position:relative; width:100%; height:340px; background:#020617; border-radius:8px; border:1.5px solid #1e293b; overflow:hidden;">
+                                    <svg id="tree-graph-svg" width="100%" height="100%" viewBox="0 0 600 340">
+                                        <defs>
+                                            <marker id="arrow-red" viewBox="0 0 10 10" refX="25" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+                                                <path d="M 0 1 L 9 5 L 0 9 z" fill="#ef4444"/>
+                                            </marker>
+                                            <marker id="arrow-yellow" viewBox="0 0 10 10" refX="25" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+                                                <path d="M 0 1 L 9 5 L 0 9 z" fill="#f59e0b"/>
+                                            </marker>
+                                            <marker id="arrow-green" viewBox="0 0 10 10" refX="25" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+                                                <path d="M 0 1 L 9 5 L 0 9 z" fill="#10b981"/>
+                                            </marker>
+                                        </defs>
+
+                                        <!-- Background Compass Radar Grid -->
+                                        <g id="compass-grid">
+                                            <circle cx="300" cy="170" r="130" fill="none" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3"/>
+                                            <circle cx="300" cy="170" r="75" fill="none" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3"/>
+                                            <line x1="300" y1="20" x2="300" y2="320" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+                                            <line x1="150" y1="170" x2="450" y2="170" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+                                            <text x="300" y="16" fill="#38bdf8" font-size="10" font-weight="900" text-anchor="middle">UTARA (0°)</text>
+                                            <text x="456" y="174" fill="#38bdf8" font-size="10" font-weight="900" text-anchor="start">TIMUR (90°)</text>
+                                            <text x="300" y="334" fill="#38bdf8" font-size="10" font-weight="900" text-anchor="middle">SELATAN (180°)</text>
+                                            <text x="144" y="174" fill="#38bdf8" font-size="10" font-weight="900" text-anchor="end">BARAT (270°)</text>
+                                        </g>
+
+                                        <!-- Edges / Directed Vector Arrows (Rendered by JS) -->
+                                        <g id="graph-edges"></g>
+                                        <!-- Tree Nodes (Rendered by JS) -->
+                                        <g id="graph-nodes"></g>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="card-helper-text" style="margin-top:10px;">
+                                <span>💡</span> Pohon tetangga dapat ditambah atau dikurangi secara bebas. Parameter Daun Bersentuhan menandai transmisi kontak fisik langsung antar tajuk sawit.
+                            </div>
+                        </div>
+                    </div>
+                    
+                </form>
+                
+                <div class="bottom-action-buttons">
+                    <button type="button" id="btn-reset-form" class="neo-btn bg-pink">RESET FORM</button>
+                    <button type="button" id="btn-to-camera" class="neo-btn bg-green">LANJUT KE KAMERA 📷</button>
+                </div>
+            </section>
+            
+            <!-- PAGE 2: KAMERA INSPEKSI -->
+            <section class="wizard-page" id="page-camera">
+                <div class="section-heading-block">
+                    <h2>KAMERA INSPEKSI</h2>
+                    <p>Ambil foto kondisi daun atau buah kelapa sawit secara real-time menggunakan modul kamera</p>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:20px; width:100%;">
+                    
+                    <!-- KAMERA INSPEKSI TP-LINK VIGI & STEPPER CONTROL (ARDUINO TB6600) -->
+                    <div class="camera-workspace-layout-v2">
+                        <!-- LEFT: Kamera TP-Link Viewport -->
+                        <div class="cam-left-col">
+                            <div class="neo-card stream-viewport-card" style="background:#050B14;border:4px solid #FF5E62;box-shadow:5px 5px 0px #000;padding:10px;margin:0;display:flex;flex-direction:column;justify-content:space-between;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid #FF5E62;flex-wrap:wrap;gap:6px;">
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <span style="font-size:13px;font-weight:900;color:#FF5E62;font-family:'Space Grotesk',sans-serif;">📷 KAMERA INSPEKSI</span>
+                                        <!-- MODE SWITCHER: NORMAL vs AI GANODERMA -->
+                                        <div class="stream-mode-toggle" style="display:inline-flex;background:#0F172A;border:2px solid #000;border-radius:6px;overflow:hidden;box-shadow:2px 2px 0px #000;">
+                                            <button type="button" id="btn-mode-normal" class="mode-toggle-btn active" style="padding:4px 10px;font-size:10px;font-weight:900;cursor:pointer;border:none;background:#00F5D4;color:#000;font-family:'Space Grotesk',sans-serif;">📷 NORMAL (VIGI)</button>
+                                            <button type="button" id="btn-mode-ai" class="mode-toggle-btn" style="padding:4px 10px;font-size:10px;font-weight:900;cursor:pointer;border:none;background:#1E293B;color:#94A3B8;font-family:'Space Grotesk',sans-serif;">🧠 AI GANODERMA</button>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+                                        <span id="ai-telemetry-badge" style="display:none;background:#8B5CF6;color:#FFF;font-size:10px;padding:3px 8px;border-radius:4px;font-weight:900;border:1px solid #000;font-family:monospace;white-space:nowrap;">● AI: 0 DETEKSI | 24 FPS</span>
+                                        <span style="background:#FF5E62;color:#FFF;font-size:10px;padding:3px 8px;border-radius:4px;font-weight:900;border:1px solid #000;white-space:nowrap;">TB6600 GIMBAL</span>
+                                    </div>
+                                </div>
+                                <div class="mjpeg-viewport-wrapper" style="position:relative;background:#000;border-radius:10px;overflow:hidden;width:100%;min-height:360px;height:360px;display:flex;align-items:center;justify-content:center;">
+                                    <img id="mjpeg-direct-img-cam2" src="/api/camera2/stream" alt="Live Camera 2 Stream" style="width:100%;height:100%;object-fit:contain;display:block;">
+                                    <div class="live-stream-badge" id="live-stream-badge" style="display:block;background:#FF5E62;top:10px;right:10px;position:absolute;color:#FFF;font-size:10px;padding:4px 10px;border-radius:4px;font-weight:900;border:1px solid #000;box-shadow:2px 2px 0px #000;z-index:5;">● TP-LINK VIGI LIVE</div>
+                                    <div class="rec-stream-badge" id="rec-indicator" style="display: none; top:10px; left:10px; z-index:5;">🔴 RECORDING</div>
+                                </div>
+                                <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:10px;">
+                                    <button type="button" id="btn-capture-photo-cam2" class="neo-btn capture-action-btn bg-pink" style="margin:0;font-size:14px;padding:10px;font-weight:900;color:#FFF;">📸 AMBIL SNAPSHOT FOTO</button>
+                                    <div class="camera-actions-toolbar" style="display:flex;gap:4px;">
+                                        <button type="button" id="btn-stream-start" class="neo-btn bg-yellow" title="🔴 Mulai Rekam Video" style="font-weight:900;font-size:12px;padding:8px 10px;white-space:nowrap;color:#000;">🔴 REKAM</button>
+                                        <button type="button" id="btn-stream-pause" class="neo-btn bg-yellow" title="⏸ Pause Rekam Video" style="font-weight:900;font-size:12px;padding:8px 10px;display:none;">⏸</button>
+                                        <button type="button" id="btn-stream-stop" class="neo-btn bg-teal" title="⏹ Hentikan & Simpan Video" style="font-weight:900;font-size:12px;padding:8px 10px;white-space:nowrap;" disabled>⏹ SIMPAN</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- OPTICAL ZOOM & DIGITAL SCALE CARDS -->
+                            <div class="neo-card camera-setup-card" style="padding:12px 14px;margin-top:10px;background:#0F172A;border:4px solid #000;box-shadow:5px 5px 0px #000;color:#FFF;">
+                                <!-- Optical Zoom (Motorized Lens VIGI) -->
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;border-bottom:1px solid #334155;padding-bottom:6px;">
+                                    <span style="font-size:12px;font-weight:900;color:#00F5D4;font-family:'Space Grotesk',sans-serif;">🔬 OPTICAL ZOOM (LENSA MOTOR VIGI S345ZI)</span>
+                                    <span id="lbl-optical-zoom" style="font-size:11px;font-weight:900;color:#FF5E62;font-family:monospace;">1.0x (WIDE)</span>
+                                </div>
+                                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
+                                    <button type="button" id="btn-optical-zoom-out" class="neo-btn bg-pink" style="font-size:11px;padding:6px 12px;font-weight:900;color:#FFF;" title="Zoom Out Optical (Wide / Melebar)">🔍 WIDE (-)</button>
+                                    <button type="button" id="btn-optical-zoom-in" class="neo-btn bg-teal" style="font-size:11px;padding:6px 12px;font-weight:900;color:#000;" title="Zoom In Optical (Tele / Mendekat)">🔎 TELE (+)</button>
+                                    <button type="button" id="btn-optical-zoom-reset" class="neo-btn bg-yellow" style="font-size:11px;padding:6px 10px;font-weight:900;color:#000;" title="Reset ke Posisi Wide Terlebar">RESET 1x</button>
+                                    
+                                    <div style="display:flex;gap:4px;margin-left:auto;">
+                                        <button type="button" class="btn-optical-preset neo-btn" data-pos="0.0" style="font-size:10px;padding:4px 8px;font-weight:900;background:#334155;color:#FFF;">1x</button>
+                                        <button type="button" class="btn-optical-preset neo-btn" data-pos="0.33" style="font-size:10px;padding:4px 8px;font-weight:900;background:#334155;color:#FFF;">2x</button>
+                                        <button type="button" class="btn-optical-preset neo-btn" data-pos="0.66" style="font-size:10px;padding:4px 8px;font-weight:900;background:#334155;color:#FFF;">3x</button>
+                                        <button type="button" class="btn-optical-preset neo-btn" data-pos="1.0" style="font-size:10px;padding:4px 8px;font-weight:900;background:#FF5E62;color:#FFF;">4x MAX</button>
+                                    </div>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:10px;">
+                                    <span style="font-size:10px;color:#94A3B8;font-weight:bold;white-space:nowrap;">LENS POS:</span>
+                                    <input type="range" class="neo-range-slider" id="slider-optical-zoom" min="0.0" max="1.0" step="0.05" value="0.0" autocomplete="off" style="flex:1;">
+                                </div>
+
+                                <!-- Digital Zoom/Crop -->
+                                <div style="display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:8px;border-top:1px solid #1E293B;">
+                                    <span style="font-size:11px;font-weight:800;color:#94A3B8;white-space:nowrap;">DIGITAL CROP: <span id="lbl-crop-scale" style="color:#FFF;">1.0x</span></span>
+                                    <input type="range" class="neo-range-slider" id="slider-crop-scale" min="1.0" max="4.0" step="0.05" value="1.0" autocomplete="off" style="flex:1;">
+                                    <button type="button" id="btn-reset-crop" class="neo-btn bg-yellow" style="font-size:9px;padding:3px 8px;font-weight:900;color:#000;white-space:nowrap;">RESET</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: Stepper Motor Joystick D-Pad (TB6600) -->
+                        <div class="cam-right-col">
+                            <div class="neo-card camera-ptz-card gimbal-studio-panel-v2" style="margin:0; border-color:#FF5E62; height:100%;">
+                                <div class="gimbal-header-v2" style="background:#FF5E62; color:#FFF;">
+                                    <h3 class="gimbal-title-v2" style="color:#FFF;">🕹️ STEPPER JOYSTICK CONTROL (ARDUINO)</h3>
+                                    <div class="gimbal-header-controls">
+                                        <div class="gimbal-step-selector-v2">
+                                            <span class="gimbal-step-label-v2" style="color:#FFF;">STEPS</span>
+                                            <input type="number" id="stepper-step-count" class="gimbal-step-dropdown-v2" value="800" min="1" max="10000" step="50" style="width:85px; text-align:center; font-weight:900; background:#FFF; color:#000; border:2px solid #000; border-radius:6px; padding:4px;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 8-Way D-Pad Grid Stepper Motor — SAME DESIGN AS 3-AXIS GIMBAL -->
+                                <div class="gimbal-dpad-grid-v2">
+                                    <button type="button" class="gimbal-btn-v2 gimbal-btn-diag btn-stepper-dir" data-dir="NW">
+                                        <span class="gimbal-btn-icon">↖</span>
+                                        <span class="gimbal-btn-text">NW</span>
+                                    </button>
+                                    <button type="button" class="gimbal-btn-v2 gimbal-btn-card btn-stepper-dir" data-dir="UP">
+                                        <span class="gimbal-btn-icon">⬆</span>
+                                        <span class="gimbal-btn-text">ATAS (STP 1)</span>
+                                    </button>
+                                    <button type="button" class="gimbal-btn-v2 gimbal-btn-diag btn-stepper-dir" data-dir="NE">
+                                        <span class="gimbal-btn-icon">↗</span>
+                                        <span class="gimbal-btn-text">NE</span>
+                                    </button>
+                                    
+                                    <button type="button" class="gimbal-btn-v2 gimbal-btn-card btn-stepper-dir" data-dir="LEFT">
+                                        <span class="gimbal-btn-icon">⬅</span>
+                                        <span class="gimbal-btn-text">KIRI (STP 2)</span>
+                                    </button>
+                                    <button type="button" class="gimbal-btn-v2 gimbal-btn-home btn-stepper-dir" data-dir="HOME">
+                                        <span class="gimbal-btn-icon">🏠</span>
+                                        <span class="gimbal-btn-text">HOME</span>
+                                    </button>
+                                    <button type="button" class="gimbal-btn-v2 gimbal-btn-card btn-stepper-dir" data-dir="RIGHT">
+                                        <span class="gimbal-btn-icon">➡</span>
+                                        <span class="gimbal-btn-text">KANAN (STP 2)</span>
+                                    </button>
+                                    
+                                    <button type="button" class="gimbal-btn-v2 gimbal-btn-diag btn-stepper-dir" data-dir="SW">
+                                        <span class="gimbal-btn-icon">↙</span>
+                                        <span class="gimbal-btn-text">SW</span>
+                                    </button>
+                                    <button type="button" class="gimbal-btn-v2 gimbal-btn-card btn-stepper-dir" data-dir="DOWN">
+                                        <span class="gimbal-btn-icon">⬇</span>
+                                        <span class="gimbal-btn-text">BAWAH (STP 1)</span>
+                                    </button>
+                                    <button type="button" class="gimbal-btn-v2 gimbal-btn-diag btn-stepper-dir" data-dir="SE">
+                                        <span class="gimbal-btn-icon">↘</span>
+                                        <span class="gimbal-btn-text">SE</span>
+                                    </button>
+                                </div>
+
+                                <div style="padding:8px 12px; background:#050B14; font-size:10px; color:#94A3B8; border-top:2px solid #334155; font-family:monospace; display:flex; justify-content:space-between; border-radius: 6px;">
+                                    <span>📌 Stepper 1: Atas / Bawah</span>
+                                    <span>📌 Stepper 2: Kanan / Kiri</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ROW 3: HASIL INSPEKSI & GALERI MEDIA (FOTO & VIDEO) -->
+                    <div class="camera-workspace-layout-v2">
+                        <!-- LEFT: Last Snapshot & Last Video -->
+                        <div class="cam-left-col">
+                            <!-- Single Photo Result Card (Hasil Snapshot Terakhir) -->
+                            <div class="neo-card last-snapshot-card" style="padding:14px;margin:0;background:#FFFFFF;border:4px solid #000;box-shadow:5px 5px 0px #000;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;border-bottom:3px solid #000;padding-bottom:6px;">
+                                    <h3 style="font-size:13px;font-weight:900;color:#0F172A;margin:0;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;">📸 HASIL FOTO SNAPSHOT TERAKHIR</h3>
+                                    <span id="last-snap-time" class="snap-time-badge" style="background:#0F172A;color:#00F5D4;font-size:10px;padding:3px 8px;border-radius:4px;font-weight:bold;font-family:monospace;border:2px solid #000;">BELUM ADA</span>
+                                </div>
+                                <div class="snapshot-preview-viewport" style="position:relative;background:#050B14;border:3px solid #000;box-shadow:3px 3px 0px #000;border-radius:8px;height:200px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                    <img id="last-snapshot-preview-img" src="" alt="Snapshot Terakhir" style="width:100%;height:100%;object-fit:contain;display:none;cursor:pointer;">
+                                    
+                                    <div id="last-snapshot-info-overlay" style="position:absolute;bottom:8px;left:8px;background:rgba(15, 23, 42, 0.9);color:#FFF;font-size:10px;padding:4px 8px;border-radius:4px;font-weight:bold;border:1px solid #00F5D4;display:none;font-family:monospace;max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                        📁 <span id="lbl-snap-filename">filename.jpg</span>
+                                    </div>
+
+                                    <div id="last-snapshot-actions" style="position:absolute;top:8px;right:8px;display:none;gap:4px;z-index:10;">
+                                        <a id="btn-download-snap" href="#" download class="neo-btn bg-teal" style="font-size:10px;padding:4px 8px;font-weight:900;text-decoration:none;" title="Download Foto">💾 SIMPAN</a>
+                                        <button type="button" id="btn-delete-snap" class="neo-btn bg-pink" style="font-size:10px;padding:4px 8px;font-weight:900;" title="Hapus Foto Ini">✖ HAPUS</button>
+                                    </div>
+
+                                    <div id="last-snapshot-empty" class="snapshot-empty-msg" style="color:#E2E8F0;font-size:12px;font-weight:800;text-align:center;padding:16px;background:radial-gradient(circle, #1E293B 0%, #050B14 100%);width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                                        <div style="font-size:30px;margin-bottom:4px;filter:drop-shadow(0 0 8px #00F5D4);">📸</div>
+                                        <span style="font-family:'Space Grotesk',sans-serif;letter-spacing:0.5px;">BELUM ADA SNAPSHOT</span>
+                                        <span style="font-size:10px;color:#94A3B8;margin-top:2px;font-weight:600;">Tekan tombol <strong style="color:#00F5D4;">"📸 AMBIL SNAPSHOT FOTO"</strong> di atas untuk mengambil foto.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Single Video Result Card (Hasil Rekaman Video Terakhir) -->
+                            <div class="neo-card last-video-card" style="padding:14px;margin-top:10px;background:#FFFFFF;border:4px solid #000;box-shadow:5px 5px 0px #000;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;border-bottom:3px solid #000;padding-bottom:6px;">
+                                    <h3 style="font-size:13px;font-weight:900;color:#0F172A;margin:0;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;">🎬 HASIL REKAMAN VIDEO TERAKHIR</h3>
+                                    <span id="last-video-time" class="snap-time-badge" style="background:#0F172A;color:#FF5E62;font-size:10px;padding:3px 8px;border-radius:4px;font-weight:bold;font-family:monospace;border:2px solid #000;">BELUM ADA</span>
+                                </div>
+                                <div class="video-preview-viewport" style="position:relative;background:#050B14;border:3px solid #000;box-shadow:3px 3px 0px #000;border-radius:8px;height:200px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                    <video id="last-video-preview-player" controls style="width:100%;height:100%;object-fit:contain;display:none;"></video>
+                                    
+                                    <div id="last-video-info-overlay" style="position:absolute;bottom:8px;left:8px;background:rgba(15, 23, 42, 0.9);color:#FFF;font-size:10px;padding:4px 8px;border-radius:4px;font-weight:bold;border:1px solid #FF5E62;display:none;font-family:monospace;max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:10;">
+                                        🎬 <span id="lbl-video-filename">recording.mp4</span>
+                                    </div>
+
+                                    <div id="last-video-actions" style="position:absolute;top:8px;right:8px;display:none;gap:4px;z-index:10;">
+                                        <a id="btn-download-video" href="#" download class="neo-btn bg-teal" style="font-size:10px;padding:4px 8px;font-weight:900;text-decoration:none;" title="Download Video">💾 SIMPAN</a>
+                                        <button type="button" id="btn-delete-video" class="neo-btn bg-pink" style="font-size:10px;padding:4px 8px;font-weight:900;" title="Hapus Video Ini">✖ HAPUS</button>
+                                    </div>
+
+                                    <div id="last-video-empty" class="video-empty-msg" style="color:#E2E8F0;font-size:12px;font-weight:800;text-align:center;padding:16px;background:radial-gradient(circle, #1E293B 0%, #050B14 100%);width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                                        <div style="font-size:30px;margin-bottom:4px;filter:drop-shadow(0 0 8px #FF5E62);">🎬</div>
+                                        <span style="font-family:'Space Grotesk',sans-serif;letter-spacing:0.5px;">BELUM ADA REKAMAN VIDEO</span>
+                                        <span style="font-size:10px;color:#94A3B8;margin-top:2px;font-weight:600;">Tekan tombol <strong style="color:#FF5E62;">"🔴 REKAM"</strong> lalu <strong style="color:#00F5D4;">"⏹ SIMPAN"</strong> untuk merekam video.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: Snapshot & Video Gallery Collections -->
+                        <div class="cam-right-col">
+                            <!-- Dedicated Snapshot Gallery Card -->
+                            <div class="neo-card gallery-strip-card" style="padding:14px;margin:0;background:#FFFFFF;border:4px solid #000;box-shadow:5px 5px 0px #000;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;border-bottom:3px solid #000;padding-bottom:8px;">
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <span style="font-size:16px;">🖼️</span>
+                                        <h3 style="font-size:13px;font-weight:900;color:#0F172A;margin:0;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;">GALERI SNAPSHOT FOTO</h3>
+                                    </div>
+                                    <div style="display:flex;gap:6px;align-items:center;">
+                                        <span class="count-tag-label bg-yellow" id="gallery-count" style="font-size:10px;padding:3px 6px;font-weight:900;border:2px solid #000;">TOTAL: 0</span>
+                                        <button type="button" id="btn-clear-gallery" class="neo-btn bg-pink" style="font-size:10px;padding:3px 8px;font-weight:900;margin-left:4px;" title="Bersihkan Semua Foto">🗑 HAPUS</button>
+                                    </div>
+                                </div>
+                                <div class="gallery-scroll-container" style="background:#0F172A;padding:10px;border-radius:8px;border:3px solid #000;box-shadow:3px 3px 0px #000;overflow-x:auto;min-height:100px;">
+                                    <div class="gallery-strip-track" id="gallery-thumbnails" style="display:flex;gap:10px;align-items:center;min-height:80px;">
+                                        <div class="gallery-placeholder" id="gallery-placeholder" style="color:#64748B;font-size:11px;font-weight:700;width:100%;text-align:center;font-family:monospace;letter-spacing:0.5px;">[ GALERI KOSONG - FOTO AKAN TERSIMPAN DI SINI ]</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Dedicated Video Album Gallery Card -->
+                            <div class="neo-card video-gallery-strip-card" style="padding:14px;margin-top:10px;background:#FFFFFF;border:4px solid #000;box-shadow:5px 5px 0px #000;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;border-bottom:3px solid #000;padding-bottom:8px;">
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <span style="font-size:16px;">🎥</span>
+                                        <h3 style="font-size:13px;font-weight:900;color:#0F172A;margin:0;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;">GALERI ALBUM VIDEO</h3>
+                                    </div>
+                                    <div style="display:flex;gap:6px;align-items:center;">
+                                        <span class="count-tag-label bg-orange" id="video-gallery-count" style="font-size:10px;padding:3px 6px;font-weight:900;border:2px solid #000;color:#FFF;">TOTAL: 0</span>
+                                        <button type="button" id="btn-clear-video-gallery" class="neo-btn bg-pink" style="font-size:10px;padding:3px 8px;font-weight:900;margin-left:4px;" title="Bersihkan Semua Video">🗑 HAPUS</button>
+                                    </div>
+                                </div>
+                                <div class="gallery-scroll-container" style="background:#0F172A;padding:10px;border-radius:8px;border:3px solid #000;box-shadow:3px 3px 0px #000;overflow-x:auto;min-height:100px;">
+                                    <div class="gallery-strip-track" id="video-gallery-thumbnails" style="display:flex;gap:10px;align-items:center;min-height:80px;">
+                                        <div class="gallery-placeholder" id="video-gallery-placeholder" style="color:#64748B;font-size:11px;font-weight:700;width:100%;text-align:center;font-family:monospace;letter-spacing:0.5px;">[ ALBUM VIDEO KOSONG - REKAMAN AKAN TERSIMPAN DI SINI ]</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                
+                <div class="bottom-action-buttons">
+                    <button type="button" id="btn-camera-back" class="neo-btn bg-pink">📋 KEMBALI KE FORM</button>
+                    <button type="button" id="btn-camera-next" class="neo-btn bg-green">LANJUT KE BACA SENSOR 📊</button>
+                </div>
+            </section>
+
+            
+            <!-- PAGE 3: BACA SENSOR NPK -->
+            <section class="wizard-page" id="page-sensor">
+                <div class="section-heading-block">
+                    <h2>PEMBACAAN SENSOR NPK & TANAH</h2>
+                    <p>Lakukan scanning parameter kimiawi dan fisika tanah kelapa sawit secara real-time.</p>
+                </div>
+                
+                <div class="sensor-page-workspace">
+                    <!-- Grid of flat colored parameters -->
+                    <div class="soil-metrics-grid">
+                        
+                        <!-- NITROGEN -->
+                        <div class="neo-card soil-metric-block bg-blue-block">
+                            <span class="block-caption">NITROGEN (N)</span>
+                            <div class="block-value-row">
+                                <span class="block-value" id="sensor-val-n">0</span>
+                                <span class="block-unit">mg/kg</span>
+                            </div>
+                            <div class="neo-progress-bar">
+                                <div class="neo-progress-fill bar-n" id="sensor-fill-n" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- PHOSPHOR -->
+                        <div class="neo-card soil-metric-block bg-purple-block">
+                            <span class="block-caption">PHOSPHOR (P)</span>
+                            <div class="block-value-row">
+                                <span class="block-value" id="sensor-val-p">0</span>
+                                <span class="block-unit">mg/kg</span>
+                            </div>
+                            <div class="neo-progress-bar">
+                                <div class="neo-progress-fill bar-p" id="sensor-fill-p" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- KALIUM -->
+                        <div class="neo-card soil-metric-block bg-orange-block">
+                            <span class="block-caption">KALIUM (K)</span>
+                            <div class="block-value-row">
+                                <span class="block-value" id="sensor-val-k">0</span>
+                                <span class="block-unit">mg/kg</span>
+                            </div>
+                            <div class="neo-progress-bar">
+                                <div class="neo-progress-fill bar-k" id="sensor-fill-k" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- pH -->
+                        <div class="neo-card soil-metric-block bg-pink-block">
+                            <span class="block-caption">KEASAMAN TANAH (pH)</span>
+                            <div class="block-value-row">
+                                <span class="block-value" id="sensor-val-ph">0.0</span>
+                                <span class="block-unit">pH</span>
+                            </div>
+                            <div class="ph-gradient-slider-container">
+                                <div class="ph-gradient-slider-track"></div>
+                                <div class="ph-slider-arrow" id="sensor-ph-pointer" style="left: 50%;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- EC -->
+                        <div class="neo-card soil-metric-block bg-green-block">
+                            <span class="block-caption">KONDUKTIVITAS LISTRIK (EC)</span>
+                            <div class="block-value-row">
+                                <span class="block-value" id="sensor-val-ec">0</span>
+                                <span class="block-unit">µS/cm</span>
+                            </div>
+                            <div class="neo-progress-bar">
+                                <div class="neo-progress-fill bar-ec" id="sensor-fill-ec" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- MOISTURE -->
+                        <div class="neo-card soil-metric-block bg-teal-block">
+                            <span class="block-caption">KELEMBABAN TANAH</span>
+                            <div class="block-value-row">
+                                <span class="block-value" id="sensor-val-moist">0.0</span>
+                                <span class="block-unit">%</span>
+                            </div>
+                            <div class="neo-progress-bar">
+                                <div class="neo-progress-fill bar-moist" id="sensor-fill-moist" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- TEMPERATURE -->
+                        <div class="neo-card soil-metric-block bg-yellow-block">
+                            <span class="block-caption">SUHU TANAH (TEMP)</span>
+                            <div class="block-value-row">
+                                <span class="block-value" id="sensor-val-temp">0.0</span>
+                                <span class="block-unit">°C</span>
+                            </div>
+                            <div class="neo-progress-bar">
+                                <div class="neo-progress-fill bar-temp" id="sensor-fill-temp" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <!-- ELECTRONIC NOSE (E-NOSE) & GAS SENSORS ARRAY (PCB HARDWARE) -->
+                <div class="section-heading-block" style="margin-top: 24px;">
+                    <h2>PEMBACAAN ELECTRONIC NOSE & GAS SENSORS (PCB HARDWARE ARRAY)</h2>
+                    <p>Sensor gas semikonduktor (MQ & TGS) untuk pemantauan kualitatif udara dan senyawa organik volatil.</p>
+                </div>
+
+                <div class="sensor-page-workspace">
+                    <div class="soil-metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
+                        
+                        <!-- MQ-3: Alcohol / Ethanol -->
+                        <div class="neo-card soil-metric-block bg-blue-block">
+                            <span class="block-caption">MQ-3 (ALCOHOL / ETHANOL)</span>
+                            <div class="block-value-row">
+                                <span class="block-value" id="sensor-val-mq3">0</span>
+                                <span class="block-unit">ADC</span>
+                            </div>
+                            <div class="neo-progress-bar">
+                                <div class="neo-progress-fill bar-ph" id="sensor-fill-mq3" style="width: 0%;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:flex-end; margin-top:6px;">
+                                <span class="target-lbl-badge" id="sensor-dig-mq3" style="background:#4ecdc4; color:#000;">NORMAL</span>
+                            </div>
+                        </div>
+
+                        <!-- MQ-135: Air Quality / Ammonia -->
+                        <div class="neo-card soil-metric-block bg-green-block">
+                            <span class="block-caption">MQ-135 (AMMONIA / NH3 / AIR QUALITY)</span>
+                            <div class="block-value-row">
+                                <span class="block-value" id="sensor-val-mq135">0</span>
+                                <span class="block-unit">ADC</span>
+                            </div>
+                            <div class="neo-progress-bar">
+                                <div class="neo-progress-fill bar-ec" id="sensor-fill-mq135" style="width: 0%;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:flex-end; margin-top:6px;">
+                                <span class="target-lbl-badge" id="sensor-dig-mq135" style="background:#4ecdc4; color:#000;">NORMAL</span>
+                            </div>
+                        </div>
+
+                        <!-- MQ-138: Benzene / Acetone / VOC -->
+                        <div class="neo-card soil-metric-block" style="background:#f3e8ff;">
+                            <span class="block-caption">MQ-138 (BENZENE / TOLUENE / VOC)</span>
+                            <div class="block-value-row">
+                                <span class="block-value" id="sensor-val-mq138">0</span>
+                                <span class="block-unit">ADC</span>
+                            </div>
+                            <div class="neo-progress-bar">
+                                <div class="neo-progress-fill" id="sensor-fill-mq138" style="width: 0%; background:#a855f7;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:flex-end; margin-top:6px;">
+                                <span class="target-lbl-badge" id="sensor-dig-mq138" style="background:#4ecdc4; color:#000;">NORMAL</span>
+                            </div>
+                        </div>
+
+                        <!-- TGS-2600: Air Contaminants -->
+                        <div class="neo-card soil-metric-block bg-orange-block">
+                            <span class="block-caption">TGS-2600 (AIR CONTAMINANTS)</span>
+                            <div class="block-value-row">
+                                <span class="block-value" id="sensor-val-tgs2600">0</span>
+                                <span class="block-unit">ADC</span>
+                            </div>
+                            <div class="neo-progress-bar">
+                                <div class="neo-progress-fill bar-k" id="sensor-fill-tgs2600" style="width: 0%;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:flex-end; margin-top:6px;">
+                                <span class="target-lbl-badge" id="sensor-dig-tgs2600" style="background:#4ecdc4; color:#000;">NORMAL</span>
+                            </div>
+                        </div>
+
+                        <!-- TGS-2602: VOC / Odor / H2S -->
+                        <div class="neo-card soil-metric-block bg-pink-block">
+                            <span class="block-caption">TGS-2602 (VOC / ODOR / H2S)</span>
+                            <div class="block-value-row">
+                                <span class="block-value" id="sensor-val-tgs2602">0</span>
+                                <span class="block-unit">ADC</span>
+                            </div>
+                            <div class="neo-progress-bar">
+                                <div class="neo-progress-fill bar-n" id="sensor-fill-tgs2602" style="width: 0%;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:flex-end; margin-top:6px;">
+                                <span class="target-lbl-badge" id="sensor-dig-tgs2602" style="background:#4ecdc4; color:#000;">NORMAL</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div class="bottom-action-buttons">
+                    <button type="button" id="btn-sensor-back" class="neo-btn bg-pink">📷 KEMBALI KE KAMERA</button>
+                    <button type="button" id="btn-sensor-read" class="neo-btn bg-yellow">🔄 BACA SENSOR</button>
+                    <button type="button" id="btn-sensor-save" class="neo-btn bg-green">💾 SIMPAN DATA DATA</button>
+                </div>
+            </section>
+            
+            <!-- PAGE 4: RIWAYAT INSPEKSI -->
+            <section class="wizard-page" id="page-data">
+                <div class="section-heading-block">
+                    <h2>RIWAYAT & RECORD DATA INSPEKSI</h2>
+                    <p>Kelola data survei inspeksi kebun kelapa sawit yang tersimpan di dalam SQLite lokal gateway.</p>
+                </div>
+
+                <!-- Summary Statistics Bar -->
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px; margin-bottom:14px;">
+                    <div class="neo-card bg-yellow-block" style="padding:14px; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="font-size:11px; font-weight:800; text-transform:uppercase;">📊 TOTAL RECORD</div>
+                            <div id="stat-total-count" style="font-size:24px; font-weight:900; font-family:'Space Grotesk',sans-serif;">0</div>
+                        </div>
+                        <span style="font-size:28px;">🗂️</span>
+                    </div>
+                    <div class="neo-card bg-green-block" style="padding:14px; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="font-size:11px; font-weight:800; text-transform:uppercase;">🟢 POHON SEHAT</div>
+                            <div id="stat-healthy-count" style="font-size:24px; font-weight:900; font-family:'Space Grotesk',sans-serif;">0</div>
+                        </div>
+                        <span style="font-size:28px;">🌴</span>
+                    </div>
+                    <div class="neo-card bg-pink-block" style="padding:14px; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="font-size:11px; font-weight:800; text-transform:uppercase;">🔴 TERTULAR PARAH</div>
+                            <div id="stat-infected-count" style="font-size:24px; font-weight:900; font-family:'Space Grotesk',sans-serif;">0</div>
+                        </div>
+                        <span style="font-size:28px;">⚠️</span>
+                    </div>
+                    <div class="neo-card bg-teal-block" style="padding:14px; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="font-size:11px; font-weight:800; text-transform:uppercase;">☁️ PENDING CLOUD</div>
+                            <div id="stat-pending-count" style="font-size:24px; font-weight:900; font-family:'Space Grotesk',sans-serif;">0</div>
+                        </div>
+                        <span style="font-size:28px;">⏳</span>
+                    </div>
+                </div>
+
+                <div class="record-actions-panel" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                    <button type="button" id="btn-new-inspection" class="neo-btn bg-green">➕ INSPEKSI BARU</button>
+                    <button type="button" id="btn-refresh-data" class="neo-btn bg-yellow">🔄 REFRESH</button>
+                    <button type="button" id="btn-export-csv" class="neo-btn bg-teal">📥 EXPORT CSV</button>
+                    <button type="button" id="btn-upload-selected" class="neo-btn bg-blue">📤 UPLOAD TERPILIH</button>
+                    <button type="button" id="btn-delete-selected" class="neo-btn bg-pink">🗑 HAPUS TERPILIH</button>
+                    <button type="button" id="btn-upload-all" class="neo-btn bg-orange">📤 UPLOAD SEMUA PENDING</button>
+                </div>
+
+                <!-- Search / Filter Bar -->
+                <div style="margin-top:12px; margin-bottom:14px;">
+                    <input type="text" id="input-search-history" class="neo-input" placeholder="🔍 Cari berdasarkan Perusahaan, Kebun, No Blok, ID Pohon, atau Tanggal..." style="width:100%; padding:10px 14px; font-size:13px; font-weight:700;">
+                </div>
+
+                <div class="neo-card records-table-card">
+                    <div class="table-scroll-wrapper">
+                        <table class="neo-records-table" id="inspection-table">
+                            <thead>
+                                <tr>
+                                    <th width="40"><input type="checkbox" id="chk-select-all"></th>
+                                    <th width="60">ID</th>
+                                    <th width="70">FOTO</th>
+                                    <th>PERUSAHAAN / KEBUN</th>
+                                    <th width="90">NO BLOK</th>
+                                    <th>SENSOR TANAH & E-NOSE GAS</th>
+                                    <th>MAPPING POHON</th>
+                                    <th width="110">TANGGAL</th>
+                                    <th width="110">STATUS CLOUD</th>
+                                    <th width="100">AKSI</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inspection-table-body">
+                                <tr>
+                                    <td colspan="10" class="empty-table-placeholder">Memuat database riwayat data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            
+        </div>
+        
+        <!-- SYSTEM STATUS BAR FOOTER (100% WIDTH) -->
+        <footer class="neo-card system-status-footer">
+            <span id="sys-status-db">💾 DATABASE: -- RECORD</span>
+            <span id="sys-status-cam">📷 KIOSK CAMERA: --</span>
+            <span id="sys-status-sensor">🔌 MODBUS ENGINE: --</span>
+        </footer>
+        
+    </div>
+
+    <!-- MEDIA LIGHTBOX MODAL POPUP (PHOTO & VIDEO VIEWER) -->
+    <div id="media-modal-backdrop" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(3,7,18,0.94);backdrop-filter:blur(12px);z-index:99999;display:none;align-items:center;justify-content:center;padding:16px;">
+        <div id="media-modal-content" style="position:relative;background:#0F172A;border:4px solid #000;box-shadow:10px 10px 0px #000;border-radius:14px;width:100%;max-width:960px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;">
+            
+            <!-- Header Bar -->
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#1E293B;border-bottom:4px solid #000;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <span id="modal-type-icon" style="font-size:24px;filter:drop-shadow(0 0 6px #00F5D4);">📸</span>
+                    <div>
+                        <h3 id="modal-title" style="font-size:16px;font-weight:900;color:#FFF;margin:0;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:0.5px;">MEDIA VIEWER POPUP</h3>
+                        <span id="modal-subtitle" style="font-size:10px;color:#94A3B8;font-weight:700;font-family:monospace;">PREVIEW MONITORING KEBUN</span>
+                    </div>
+                </div>
+                <button type="button" id="btn-close-modal" class="neo-btn bg-pink" style="font-size:12px;padding:8px 16px;font-weight:900;margin:0;border:3px solid #000;box-shadow:3px 3px 0px #000;" title="Tutup Pop-up (ESC)">✖ TUTUP (ESC)</button>
+            </div>
+
+            <!-- Viewport Media Container -->
+            <div style="position:relative;flex:1;min-height:360px;max-height:68vh;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:10px;">
+                <!-- Photo view element -->
+                <img id="modal-photo-element" src="" alt="Full Preview" style="max-width:100%;max-height:100%;object-fit:contain;display:none;border-radius:4px;">
+                
+                <!-- Video player element -->
+                <video id="modal-video-element" controls autoplay playsinline preload="auto" style="width:100%;height:100%;max-height:65vh;object-fit:contain;display:none;border-radius:4px;outline:none;background:#000;"></video>
+            </div>
+
+            <!-- Footer Bar -->
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#0F172A;border-top:4px solid #000;">
+                <div style="display:flex;flex-direction:column;gap:3px;max-width:60%;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:14px;">📁</span>
+                        <span id="modal-filename-label" style="font-family:monospace;font-size:12px;color:#00F5D4;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">filename.jpg</span>
+                    </div>
+                    <span id="modal-time-label" style="font-size:10px;color:#94A3B8;font-weight:800;font-family:monospace;">📅 TANGGAL / WAKTU PENGAMBILAN: --:--:--</span>
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <a id="btn-modal-download" href="#" download class="neo-btn bg-teal" style="font-size:12px;padding:8px 16px;font-weight:900;text-decoration:none;border:3px solid #000;box-shadow:3px 3px 0px #000;" title="Download Berkas Media">💾 DOWNLOAD</a>
+                    <button type="button" id="btn-modal-delete" class="neo-btn bg-pink" style="font-size:12px;padding:8px 16px;font-weight:900;border:3px solid #000;box-shadow:3px 3px 0px #000;" title="Hapus Berkas Ini">🗑 HAPUS</button>
+                </div>
+            </div>
+
+        </div>
+    <!-- MAP PICKER MODAL -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <div id="modal-map-picker" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; padding:16px;">
+        <div class="neo-card" style="width:100%; max-width:850px; background:#1e293b; border:4px solid #000; box-shadow:8px 8px 0px #000; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; max-height:90vh;">
+            <div style="padding:14px 20px; background:#0f172a; border-bottom:4px solid #000; display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0; color:#fff; font-family:'Space Grotesk',sans-serif; font-size:18px;">🗺️ PILIH LOKASI PADA PETA INTERAKTIF</h3>
+                <button type="button" id="btn-close-map-modal" class="neo-btn bg-pink" style="padding:6px 14px; font-size:12px;">✖ TUTUP</button>
+            </div>
+            <div style="padding:12px 20px; background:#334155; display:flex; gap:8px;">
+                <input type="text" id="map-search-input" class="neo-input" placeholder="🔍 Cari kota / alamat / jalan (misal: Gambir, Jakarta Pusat)..." style="flex:1;">
+                <button type="button" id="btn-map-search" class="neo-btn bg-teal" style="padding:8px 16px;">CARI</button>
+            </div>
+            <div id="map-picker-container" style="width:100%; height:420px; background:#0f172a;"></div>
+            <div style="padding:14px 20px; background:#0f172a; border-top:4px solid #000; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div>
+                    <span style="font-size:12px; color:#94a3b8; font-weight:700;">Koordinat Terpilih:</span>
+                    <span id="map-selected-coords" style="font-family:monospace; color:#00f5d4; font-weight:900; font-size:13px; margin-left:6px;">-6.185068, 106.829179</span>
+                </div>
+                <button type="button" id="btn-confirm-map-location" class="neo-btn bg-green" style="padding:10px 24px; font-weight:900;">✅ GUNAKAN LOKASI INI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECORD INSPECTION DETAIL POPUP MODAL -->
+    <div id="modal-inspection-detail" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; padding:16px;">
+        <div class="neo-card" style="width:100%; max-width:920px; background:#1e293b; border:4px solid #000; box-shadow:8px 8px 0px #000; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; max-height:92vh;">
+            <!-- Header -->
+            <div style="padding:14px 20px; background:#0f172a; border-bottom:4px solid #000; display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span style="font-size:22px;">📋</span>
+                    <h3 id="detail-modal-title" style="margin:0; color:#fff; font-family:'Space Grotesk',sans-serif; font-size:18px;">DETAIL RECORD INSPEKSI #0</h3>
+                </div>
+                <button type="button" id="btn-close-detail-modal" class="neo-btn bg-pink" style="padding:6px 14px; font-size:12px;">✖ TUTUP</button>
+            </div>
+            
+            <!-- Body Content -->
+            <div style="padding:20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:16px; background:#0f172a;">
+                <!-- Section 1: Photo & Main Info -->
+                <div style="display:grid; grid-template-columns: 280px 1fr; gap:16px; background:#1e293b; padding:14px; border-radius:8px; border:2px solid #334155;">
+                    <div>
+                        <img id="detail-photo-element" src="" alt="Foto Inspeksi" style="width:100%; height:220px; object-fit:cover; border-radius:8px; border:3px solid #000; background:#000;">
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <h4 style="margin:0; color:#00f5d4; font-size:16px; font-family:'Space Grotesk',sans-serif;" id="detail-corp-name">PT. Perkebunan Sawit</h4>
+                        <div style="font-size:13px; color:#cbd5e1; font-weight:700;" id="detail-garden-name">Kebun Utama - Afdeling I</div>
+                        <hr style="border:0; border-top:1px solid #334155; margin:4px 0;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px; color:#94a3b8;">
+                            <div>No Blok: <strong id="detail-block-no" style="color:#fff;">-</strong></div>
+                            <div>Tahun Tanam: <strong id="detail-plant-year" style="color:#fff;">-</strong></div>
+                            <div>Luas Lahan: <strong id="detail-land-area" style="color:#fff;">- Ha</strong></div>
+                            <div>Pohon Terserang: <strong id="detail-pest-count" style="color:#ff5252;">0 Pohon</strong></div>
+                            <div>Tanggal: <strong id="detail-timestamp" style="color:#fff;">-</strong></div>
+                            <div>Status Cloud: <strong id="detail-cloud-status" style="color:#00e087;">PENDING</strong></div>
+                        </div>
+                        <div style="margin-top:6px; background:#0f172a; padding:8px; border-radius:6px; font-size:11px; color:#cbd5e1; font-family:monospace;">
+                            📍 <span id="detail-location-address">Mencari alamat...</span><br>
+                            🌐 Lat, Lon: <span id="detail-coords" style="color:#00f5d4;">0.0, 0.0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Sensor NPK Readings -->
+                <div style="background:#1e293b; padding:14px; border-radius:8px; border:2px solid #334155;">
+                    <h5 style="margin:0 0 10px 0; color:#ffd700; font-size:14px;">🌱 HASIL BACAAN SENSOR TANAH NPK</h5>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap:10px; text-align:center;">
+                        <div style="background:#0f172a; padding:8px; border-radius:6px; border:1px solid #334155;">
+                            <div style="font-size:10px; color:#94a3b8;">Suhu</div>
+                            <div id="detail-temp" style="font-size:16px; font-weight:800; color:#ffd700;">0 °C</div>
+                        </div>
+                        <div style="background:#0f172a; padding:8px; border-radius:6px; border:1px solid #334155;">
+                            <div style="font-size:10px; color:#94a3b8;">Kelembaban</div>
+                            <div id="detail-moisture" style="font-size:16px; font-weight:800; color:#00d0ff;">0 %</div>
+                        </div>
+                        <div style="background:#0f172a; padding:8px; border-radius:6px; border:1px solid #334155;">
+                            <div style="font-size:10px; color:#94a3b8;">pH Tanah</div>
+                            <div id="detail-ph" style="font-size:16px; font-weight:800; color:#ff5e5e;">0.0</div>
+                        </div>
+                        <div style="background:#0f172a; padding:8px; border-radius:6px; border:1px solid #334155;">
+                            <div style="font-size:10px; color:#94a3b8;">EC</div>
+                            <div id="detail-ec" style="font-size:16px; font-weight:800; color:#00e087;">0 uS/cm</div>
+                        </div>
+                        <div style="background:#0f172a; padding:8px; border-radius:6px; border:1px solid #334155;">
+                            <div style="font-size:10px; color:#94a3b8;">Nitrogen (N)</div>
+                            <div id="detail-n" style="font-size:16px; font-weight:800; color:#00e087;">0 mg/kg</div>
+                        </div>
+                        <div style="background:#0f172a; padding:8px; border-radius:6px; border:1px solid #334155;">
+                            <div style="font-size:10px; color:#94a3b8;">Phosphor (P)</div>
+                            <div id="detail-p" style="font-size:16px; font-weight:800; color:#00d0ff;">0 mg/kg</div>
+                        </div>
+                        <div style="background:#0f172a; padding:8px; border-radius:6px; border:1px solid #334155;">
+                            <div style="font-size:10px; color:#94a3b8;">Kalium (K)</div>
+                            <div id="detail-k" style="font-size:16px; font-weight:800; color:#ffd700;">0 mg/kg</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: E-Nose Gas RAW ADC -->
+                <div style="background:#1e293b; padding:14px; border-radius:8px; border:2px solid #334155;">
+                    <h5 style="margin:0 0 10px 0; color:#00f5d4; font-size:14px;">📡 HASIL BACAAN E-NOSE SENSOR GAS (RAW ADC)</h5>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px; text-align:center;">
+                        <div style="background:#0f172a; padding:8px; border-radius:6px; border:1px solid #334155;">
+                            <div style="font-size:10px; color:#94a3b8;">MQ-3 (Alcohol/Ethanol)</div>
+                            <div id="detail-mq3" style="font-size:15px; font-weight:800; color:#38bdf8;">0 ADC</div>
+                        </div>
+                        <div style="background:#0f172a; padding:8px; border-radius:6px; border:1px solid #334155;">
+                            <div style="font-size:10px; color:#94a3b8;">MQ-135 (Air Quality)</div>
+                            <div id="detail-mq135" style="font-size:15px; font-weight:800; color:#2ed573;">0 ADC</div>
+                        </div>
+                        <div style="background:#0f172a; padding:8px; border-radius:6px; border:1px solid #334155;">
+                            <div style="font-size:10px; color:#94a3b8;">MQ-138 (Benzene/VOC)</div>
+                            <div id="detail-mq138" style="font-size:15px; font-weight:800; color:#c084fc;">0 ADC</div>
+                        </div>
+                        <div style="background:#0f172a; padding:8px; border-radius:6px; border:1px solid #334155;">
+                            <div style="font-size:10px; color:#94a3b8;">TGS-2600 (Air Contam)</div>
+                            <div id="detail-tgs2600" style="font-size:15px; font-weight:800; color:#ffa502;">0 ADC</div>
+                        </div>
+                        <div style="background:#0f172a; padding:8px; border-radius:6px; border:1px solid #334155;">
+                            <div style="font-size:10px; color:#94a3b8;">TGS-2602 (VOC/Odor)</div>
+                            <div id="detail-tgs2602" style="font-size:15px; font-weight:800; color:#ff4757;">0 ADC</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Tree Spatial & Neighbor Relations -->
+                <div style="background:#1e293b; padding:14px; border-radius:8px; border:2px solid #334155;">
+                    <h5 style="margin:0 0 10px 0; color:#a78bfa; font-size:14px;">🌴 DATA POHON FOKUS & TETANGGA SPASIAL</h5>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:10px; font-size:12px;">
+                        <div style="background:#0f172a; padding:8px; border-radius:6px;">ID Pohon Fokus: <strong id="detail-tree-id" style="color:#a78bfa;">-</strong></div>
+                        <div style="background:#0f172a; padding:8px; border-radius:6px;">Umur Pohon: <strong id="detail-tree-age" style="color:#fff;">- Tahun</strong></div>
+                        <div style="background:#0f172a; padding:8px; border-radius:6px;">Status Kesehatan: <strong id="detail-tree-health" style="color:#ef4444;">-</strong></div>
+                    </div>
+                    <div style="background:#0f172a; padding:10px; border-radius:6px; font-size:11px; color:#cbd5e1;">
+                        <div style="font-weight:800; color:#ffd700; margin-bottom:4px;">🧭 Pohon Tetangga Korelasi:</div>
+                        <div id="detail-tree-neighbors" style="font-family:monospace; line-height:1.5;">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="padding:14px 20px; background:#0f172a; border-top:4px solid #000; display:flex; justify-content:flex-end; gap:10px;">
+                <button type="button" id="btn-close-detail-footer" class="neo-btn bg-pink" style="padding:8px 20px;">TUTUP</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/script.js?v=47.0.0"></script>
+
+</body>
+</html>
+

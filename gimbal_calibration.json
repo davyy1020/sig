@@ -1,0 +1,14 @@
+{
+    "pan_channel": 0,
+    "tilt_channel": 2,
+    "roll_channel": 1,
+    "home_angles": {
+        "pan": 44,
+        "tilt": 90,
+        "roll": 90
+    },
+    "min_pulse_us": 500,
+    "max_pulse_us": 2500,
+    "i2c_bus": 2,
+    "pca_address": "0x40"
+}

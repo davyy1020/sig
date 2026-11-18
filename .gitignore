@@ -1,0 +1,105 @@
+# ==========================================================
+# SIG - Palm Oil Monitoring System (.gitignore)
+# ==========================================================
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+.env
+wheels/
+wheels_py36/
+
+# Personal invoices, reports, and deliverables
+Invoice_*
+invoice.html
+Laporan_Inspeksi_*
+DATA_LAPORAN_SAWIT_BANGKINANG/
+*.pdf
+*.xlsx
+*.xls
+
+# Archives & large binary files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Databases & runtime data
+*.db
+*.sqlite
+*.sqlite*
+
+# Captured media (photos & videos)
+images/
+videos/
+ui/images/
+ui/static/images/
+web_report/uploads/
+web_report_php/uploads/
+*.jpg
+*.jpeg
+*.png
+*.mp4
+*.avi
+*.mkv
+*.webm
+
+# Temporary, debug, and scratch scripts
+scratch/
+test_*
+igano-live-20261114/
+niubol_dashboard/
+vps_deploy/
+finalMainProgram/
+/index.html
+
+# Deployment scripts with local/SSH helper configs
+deploy_and_run_jetson.py
+deploy_to_jetson.py
+deploy_to_minipc.sh
+deploy_to_orangepi.ps1
+deploy_to_orangepi.py
+deploy_to_vps.py
+find_and_setup.py
+install_offline_packages.py
+remote_setup.py
+run_app_on_jetson.py
+orangepi_camera.py
+servo_calibration_gui.py
+setup_minipc.sh
+setup_vps.sh
+setup_windows_vps.bat
+start_vps_windows.bat
+DOKUMENTASI_DEPLOYMENT_MINIPC.md
+DOKUMENTASI_DEPLOY_WEB_REPORT_PHP.md
+MIGRASI_TOTAL_JETSON_KE_VPS.md
+PANDUAN_SETUP_WINDOWS_VPS.md
+
+# Experimental / legacy ESP32 & Arduino sketches (keep only production firmware)
+sensor/esp32_adc2_wifi_hybrid_master/
+sensor/esp32_adc_wifi_switch_master/
+sensor/esp32_bme680_tester/
+sensor/esp32_gas_raw_only/
+sensor/esp32_npk_http_push/
+sensor/esp32_npk_raw_only/
+sensor/esp32_npk_rtos_master/
+sensor/esp32_npk_scanner/
+sensor/esp32_npk_sensor/
+sensor/esp32_npk_single_read/
+sensor/esp32_npk_troubleshooter/
+sensor/esp32_sensor_bridge/
+sensor/esp32_uart_push/
+sensor/esp32_wifi_trigger_test/
+sensor/test_npk_raw_pc.py
+cnc_stepper_control/test_stepper_serial.ino
+
+# OS & IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
